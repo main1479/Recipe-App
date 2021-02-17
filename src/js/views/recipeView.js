@@ -2,6 +2,7 @@ import icons from 'url:../../img/icons.svg';
 import {Fraction} from 'fractional';
 class RecipeView {
 	#parentEl = document.querySelector('.recipe');
+	#errorMessage = 'Can NOT find that recipe, please try another one ;('
 	#data;
 	render(data) {
 		this.#data = data;
@@ -31,6 +32,21 @@ class RecipeView {
 			window.addEventListener(event, handler)
 		);
 	}
+
+	renderError(message = this.#errorMessage) {
+    const markup = `
+      <div class="error">
+        <div>
+          <svg>
+            <use href="${icons}#icon-alert-triangle"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>
+    `;
+    this.#clear();
+    this.#parentEl.insertAdjacentHTML('afterbegin', markup)
+  }
 
 	#generateMarkup(recipe) {
 		return `
@@ -123,7 +139,9 @@ class RecipeView {
                <svg class="recipe__icon">
                   <use href="${icons}#icon-check"></use>
                </svg>
-               <div class="recipe__quantity">${ing.quantity? new Fraction(ing.quantity).toString() : ''}</div>
+               <div class="recipe__quantity">${
+									ing.quantity ? new Fraction(ing.quantity).toString() : ''
+								}</div>
                <div class="recipe__description">
                   <span class="recipe__unit">${ing.unit}</span>
                   ${ing.description}
