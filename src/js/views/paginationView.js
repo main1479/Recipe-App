@@ -7,11 +7,9 @@ class PaginationView extends View {
    handlerPagination(handler, data){
       this._parentEl.addEventListener('click', function(e){
          const btn = e.target.closest('.btn--inline');
-         console.log(btn)
          if(!btn) return
 
          if (btn.classList.contains('pagination__btn--next')) data.page++;
-         handler(data.page);
          if (btn.classList.contains('pagination__btn--prev')) data.page--;
          handler(data.page);
       })
@@ -22,7 +20,6 @@ class PaginationView extends View {
 		);
 		const currPage = this._data.page;
 
-		console.log(currPage);
 		// First page and there are other pages
 		if (currPage === 1 && numPages > 1) {
 			return `

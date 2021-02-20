@@ -3,6 +3,7 @@ import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
 import paginationView from './views/paginationView.js';
+import bookmarksView from './views/bookmarksView.js';
 
 // support for older browsers
 import 'core-js/stable';
@@ -18,14 +19,16 @@ const controlRecipes = async function () {
 		// rendering spinner
 		recipeView.renderSpinner();
 
+		resultsView.update(model.getSearchResPage());
+
+		bookmarksView.update(model.state.bookmarks);
 		// loading recipe
 		await model.loadRecipe(id);
-		const recipe = model.state.recipe;
+		// const recipe = model.state.recipe;
 
 		// render recipe
 		recipeView.render(model.state.recipe);
 	} catch (err) {
-		// console.error(err);
 		recipeView.renderError();
 	}
 };
@@ -37,25 +40,40 @@ const controlLoadSearch = async function (query) {
 	if (!query && query === '' && query === ' ') return;
 	// Loading search from API
 	await model.loadSearch(query);
-	console.log(model.state.search.results);
+
 	// render search results
-	resultsView.render(model.getSearchResPage(1));
+	resultsView.render(model.getSearchResPage());
 
 	// render pagination buttons
 	paginationView.render(model.state.search);
 };
 
-const controlPagination = function(currPage){
-	resultsView.render(model.getSearchResPage(currPage))
-	paginationView.render(model.state.search)
-}
+const controlPagination = function (currPage) {
+	resultsView.render(model.getSearchResPage(currPage));
+	paginationView.render(model.state.search);
+};
 
+const controlServings = function (newServings = model.state.recipe.servings) {
+	model.updateServings(newServings);
 
+	recipeView.update(model.state.recipe);
+};
+
+const controlBookmarks = function () {
+	if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+	else model.deleteBookmark(model.state.recipe.id);
+	// update recipeView
+	recipeView.update(model.state.recipe);
+
+	bookmarksView.render(model.state.bookmarks)
+};
 
 const init = function () {
 	recipeView.handlerRecipeView(controlRecipes);
 	searchView.handlerSearch(controlLoadSearch);
-	paginationView.handlerPagination(controlPagination, model.state.search)
+	paginationView.handlerPagination(controlPagination, model.state.search);
+	recipeView.handlerServings(controlServings);
+	recipeView.handlerBookmark(controlBookmarks);
 };
 
 init();
