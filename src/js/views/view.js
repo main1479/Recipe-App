@@ -8,14 +8,13 @@ export default class View {
 		this._data = data;
 		if (!data) return;
 		const markup = this._generateMarkup();
-		if(!render) return markup;
+		if (!render) return markup;
 		this._clear();
 		this._parentEl.insertAdjacentHTML('afterbegin', markup);
 	}
 
 	update(data) {
-		if (!data || (Array.isArray(data) && data.length === 0))
-			this._data = data;
+		if (!data || (Array.isArray(data) && data.length === 0)) this._data = data;
 		if (!data) return;
 
 		const newMarkup = this._generateMarkup();
@@ -27,12 +26,16 @@ export default class View {
 		newElements.forEach((newEl, i) => {
 			const currEl = currElements[i];
 
-			if (!newEl.isEqualNode(currEl) && newEl.firstChild?.nodeValue.trim() !== '')
+			if (
+				!newEl.isEqualNode(currEl) &&
+				newEl.firstChild?.nodeValue.trim() !== ''
+			)
 				currEl.textContent = newEl.textContent;
-			
 
-			if(!newEl.isEqualNode(currEl))
-				Array.from(newEl.attributes).forEach(attr => currEl.setAttribute(attr.name, attr.value))
+			if (!newEl.isEqualNode(currEl))
+				Array.from(newEl.attributes).forEach((attr) =>
+					currEl.setAttribute(attr.name, attr.value)
+				);
 		});
 	}
 	renderSpinner() {
@@ -57,6 +60,21 @@ export default class View {
         <div>
           <svg>
             <use href="${icons}#icon-alert-triangle"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>
+    `;
+		this._clear();
+		this._parentEl.insertAdjacentHTML('afterbegin', markup);
+	}
+
+	renderMessage(message = this._message) {
+		const markup = `
+      <div class="error">
+        <div>
+          <svg>
+            <use href="${icons}#icon-smile"></use>
           </svg>
         </div>
         <p>${message}</p>
