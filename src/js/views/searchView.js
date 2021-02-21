@@ -14,7 +14,7 @@ class SearchView extends View {
 	handlerSearch(handler) {
 		this._parentEl.addEventListener('submit', function (e) {
 			e.preventDefault();
-			
+
 			handler();
 		});
 	}
